@@ -16,7 +16,11 @@ const ProductDetailPage: React.FC = () => {
       setLoading(true);
       try {
         const data = await ProductService.getProductById(id);
-        setProduct(data);
+        if (data && (data.id || data.sku)) {
+          setProduct(data);
+        } else {
+          setProduct(null);
+        }
       } catch (error) {
         console.error('Failed to fetch product', error);
       } finally {
