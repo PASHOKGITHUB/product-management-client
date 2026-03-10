@@ -1,7 +1,10 @@
 import axios from 'axios';
 import { Product, PaginatedResponse } from '../types/product';
 
-const API_BASE_URL = `${import.meta.env.VITE_API_URL || ''}/api/products`;
+const VITE_API_URL = import.meta.env.VITE_API_URL || '';
+const API_BASE_URL = VITE_API_URL 
+  ? (VITE_API_URL.startsWith('http') ? `${VITE_API_URL}/api/products` : `https://${VITE_API_URL}/api/products`)
+  : '/api/products';
 
 export const ProductService = {
   getProducts: async (q?: string, page: number = 1, limit: number = 10): Promise<PaginatedResponse<Product>> => {
