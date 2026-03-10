@@ -62,11 +62,17 @@ const HomePage: React.FC = () => {
   };
 
   const handleSave = async (data: Partial<Product>) => {
-    } else {
-      await ProductService.createProduct(data);
+    try {
+      if (selectedProduct) {
+        await ProductService.updateProduct(selectedProduct.id, data);
+      } else {
+        await ProductService.createProduct(data);
+      }
+      setIsModalOpen(false);
+      fetchProducts();
+    } catch (error) {
+      console.error('Failed to save product', error);
     }
-    setIsModalOpen(false);
-    fetchProducts();
   };
 
   return (
