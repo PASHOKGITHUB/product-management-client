@@ -17,9 +17,14 @@ const HomePage: React.FC = () => {
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const response = await ProductService.getProducts(search, page, 10);
-      setProducts(response.data);
-      setTotalPages(response.totalPages);
+      const result = await ProductService.getProducts(search, page, 10);
+      if (result && Array.isArray(result.data)) {
+        setProducts(result.data);
+        setTotalPages(result.totalPages);
+      } else {
+        setProducts([]);
+        setTotalPages(1);
+      }
     } catch (error) {
       console.error('Failed to fetch products', error);
     } finally {
@@ -46,14 +51,17 @@ const HomePage: React.FC = () => {
 
   const handleDelete = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this product?')) {
-      await ProductService.deleteProduct(id);
-      fetchProducts();
+      try {
+        await ProductService.deleteProduct(id);
+        fetchProducts();
+      } catch (error) {
+        console.error('Failed to delete product', error);
+        // Optionally, add a user-facing error message here
+      }
     }
   };
 
   const handleSave = async (data: Partial<Product>) => {
-    if (selectedProduct) {
-      await ProductService.updateProduct(selectedProduct.id, data);
     } else {
       await ProductService.createProduct(data);
     }
